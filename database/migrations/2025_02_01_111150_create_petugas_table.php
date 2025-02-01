@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('petugas', function (Blueprint $table) {
             $table->increments('id_petugas');
             $table->unsignedInteger('id_role');
-            $table->string('nama');
-            $table->string('email');
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->timestamps();
+            $table->rememberToken();
 
             $table->foreign('id_role')->references('id_role')->on('roles');
         });
