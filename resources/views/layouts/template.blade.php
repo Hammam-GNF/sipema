@@ -49,23 +49,41 @@
                             <p>Dashboard</p>
                         </a>
                     </li>
-                    <li class="{{ Route::currentRouteName() == 'kategori.index' ? 'active' : '' }}">
-                        <a href="{{ route('kategori.index') }}">
-                            <i class="nc-icon nc-tile-56"></i>
-                            <p>Data Kategori</p>
-                        </a>
-                    </li>
                     <li class="{{ Route::currentRouteName() == 'petugas.index' ? 'active' : '' }}">
                         <a href="{{ route('petugas.index') }}">
                             <i class="nc-icon nc-single-02"></i>
                             <p>Data Petugas</p>
                         </a>
                     </li>
-                    <li class="{{ Route::currentRouteName() == 'pengaduan.index' ? 'active' : '' }}">
-                        <a href="{{ route('pengaduan.index') }}">
-                            <i class="bi bi-bandaid"></i>
-                            <p>Data Pengaduan</p>
+                    <li class="{{ Route::currentRouteName() == 'kategori.index' ? 'active' : '' }}">
+                        <a href="{{ route('kategori.index') }}">
+                            <i class="nc-icon nc-tile-56"></i>
+                            <p>Data Kategori</p>
                         </a>
+                    </li>
+                    <!-- Pengaduan with Submenu -->
+                    <li class="nav-item {{ Route::currentRouteName() == 'pengaduan.data.index' || Route::currentRouteName() == 'pengaduan.detail.index' ? 'active' : '' }}">
+                        <a data-toggle="collapse" href="#pengaduanSubmenu" aria-expanded="false" class="nav-link">
+                            <i class="bi bi-bandaid"></i>
+                            <p>Pengaduan</p>
+                            <b class="caret"></b>
+                        </a>
+                        <div class="collapse {{ Route::currentRouteName() == 'pengaduan.data.index' || Route::currentRouteName() == 'layouts.dashboard' ? 'show' : '' }}" id="pengaduanSubmenu">
+                            <ul class="nav pl-3">
+                                <li class="{{ Route::currentRouteName() == 'pengaduan.data.index' ? 'active' : '' }}">
+                                    <a href="{{ route('pengaduan.data.index') }}">
+                                        <i class="nc-icon nc-tile-56"></i>
+                                        <p>Data</p>
+                                    </a>
+                                </li>
+                                <li class="{{ Route::currentRouteName() == 'layouts.dashboard' ? 'active' : '' }}">
+                                    <a href="{{ route('layouts.dashboard') }}">
+                                        <i class="bi bi-file-earmark-text"></i>
+                                        <p>Detail</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -126,8 +144,10 @@
     <script src="../assets/js/core/popper.min.js"></script>
     <script src="../assets/js/core/bootstrap.min.js"></script>
     <script src="../assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+    <!-- PerfectScrollbar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/perfect-scrollbar@1.5.0/dist/perfect-scrollbar.min.js"></script>
     <!--  Google Maps Plugin    -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script> -->
     <!-- Chart JS -->
     <script src="../assets/js/plugins/chartjs.min.js"></script>
     <!--  Notifications Plugin    -->
@@ -136,14 +156,19 @@
     <script src="../assets/js/paper-dashboard.min.js?v=2.0.1" type="text/javascript"></script>
     <!-- Paper Dashboard DEMO methods, don't include it in your project! -->
     <script src="../assets/demo/demo.js"></script>
-    <script>
-        $(document).ready(function () {
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.min.css">
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.min.js"></script>
+
+    <!-- <script>
+        $(document).ready(function() {
             // Javascript method's body can be found in assets/assets-for-demo/js/demo.js
             demo.initChartsPages();
         });
-    </script>
+    </script> -->
 
-    @yield('page-scripts') 
+    @yield('page-scripts')
 
     @yield('scripts')
 </body>

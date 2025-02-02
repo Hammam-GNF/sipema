@@ -5,52 +5,52 @@
     crossorigin="anonymous"></script>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         $.ajax({
             url: "{{ route('petugas.count') }}",
             type: 'GET',
-            success: function (response) {
+            success: function(response) {
                 if (response.status === 200) {
                     $('#total-petugas').text(response.totalPetugas);
                 } else {
                     $('#total-petugas').text('Error fetching data');
                 }
             },
-            error: function () {
+            error: function() {
                 $('#total-petugas').text('Error fetching data');
             }
         });
     });
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         $.ajax({
             url: "{{ route('kategori.count') }}",
             type: 'GET',
-            success: function (response) {
+            success: function(response) {
                 if (response.status === 200) {
                     $('#total-kategori').text(response.totalKategori);
                 } else {
                     $('#total-kategori').text('Error fetching data');
                 }
             },
-            error: function () {
+            error: function() {
                 $('#total-kategori').text('Error fetching data');
             }
         });
     });
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         $.ajax({
             url: "{{ route('pengaduan.count') }}",
             type: 'GET',
-            success: function (response) {
+            success: function(response) {
                 if (response.status === 200) {
                     $('#total-pengaduan').text(response.totalPengaduan);
                 } else {
                     $('#total-pengaduan').text('Error fetching data');
                 }
             },
-            error: function () {
+            error: function() {
                 $('#total-pengaduan').text('Error fetching data');
             }
         });
