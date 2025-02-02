@@ -9,7 +9,8 @@ use Illuminate\Notifications\Notifiable;
 class Pengaduan extends Model
 {
     use HasFactory, Notifiable;
-    protected $table = 'Pengaduan';
+    protected $table = 'pengaduan';
+    protected $primaryKey = 'id_pengaduan';
     protected $fillable = [
         'id_petugas',
         'id_kategori',
@@ -19,11 +20,11 @@ class Pengaduan extends Model
 
     public function petugas()
     {
-        return $this->hasMany(Petugas::class, 'id_petugas', 'id_petugas');
+        return $this->belongsTo(Petugas::class, 'id_petugas', 'id_petugas');
     }
 
     public function kategori()
     {
-        return $this->hasMany(Kategori::class, 'id_kategori', 'id_kategori');
+        return $this->belongsTo(Kategori::class, 'id_kategori', 'id_kategori');
     }
 }
