@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Petugas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class PetugasController extends Controller
@@ -22,8 +23,9 @@ class PetugasController extends Controller
         // Validasi data
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
+            'email' => 'required|email|unique:petugas,email|max:255',
+            'role' => 'required|in:Admin,Petugas',
+            'password' => 'required|string|min:6|max:20',
         ]);
 
         if ($validator->fails()) {
@@ -34,12 +36,14 @@ class PetugasController extends Controller
             ], 422);
         }
 
-        $petugasData = $request->only(['name', 'address', 'phone']);
+        $petugasData = $request->only(['name', 'email', 'role']);
+        $petugasData['password'] = Hash::make($request->password);
+
         Petugas::create($petugasData);
 
         return response()->json([
             'status' => 200,
-            'message' => 'Petugas created successfully'
+            'message' => 'Petugas berhasil ditambahkan.'
         ]);
     }
 
@@ -52,9 +56,9 @@ class PetugasController extends Controller
         ]);
     }
 
-    public function edit($id)
+    public function edit($id_petugas)
     {
-        $petugas = Petugas::find($id);
+        $petugas = Petugas::find($id_petugas);
 
         if ($petugas) {
             return response()->json([
@@ -64,7 +68,7 @@ class PetugasController extends Controller
         } else {
             return response()->json([
                 'status' => 404,
-                'message' => 'Petugas not found'
+                'message' => 'Petugas tidak ditemukan'
             ]);
         }
     }
@@ -74,8 +78,9 @@ class PetugasController extends Controller
         $validator = Validator::make($request->all(), [
             'id_petugas' => 'required|exists:petugas,id_petugas',
             'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
+            'email' => 'required|email|unique:petugas,email,' . $request->id_petugas . ',id_petugas|max:255',
+            'role' => 'required|in:Admin,Petugas',
+            'password' => 'nullable|string|min:6|max:20',
         ]);
 
         if ($validator->fails()) {
@@ -86,18 +91,24 @@ class PetugasController extends Controller
             ], 422);
         }
 
-        $petugas = Petugas::find($request->id);
+        $petugas = Petugas::find($request->id_petugas);
 
         if ($petugas) {
-            $petugas->update($request->only(['name', 'address', 'phone']));
+            $petugas->update($request->only(['name', 'email', 'role']));
+
+            if ($request->has('password') && $request->password != '') {
+                $petugas->password = $request->password;
+                $petugas->save();
+            }
+
             return response()->json([
                 'status' => 200,
-                'message' => 'Petugas updated successfully'
+                'message' => 'Petugas berhasil diperbarui.'
             ]);
         } else {
             return response()->json([
                 'status' => 404,
-                'message' => 'Petugas not found'
+                'message' => 'Petugas tidak ditemukan'
             ]);
         }
     }
@@ -116,17 +127,16 @@ class PetugasController extends Controller
             ], 422);
         }
 
-        $petugas = Petugas::find($request->id);
-
+        $petugas = Petugas::find($request->id_petugas);
         if ($petugas && $petugas->delete()) {
             return response()->json([
                 'status' => 200,
-                'message' => 'Petugas deleted successfully.'
+                'message' => 'Petugas berhasil dihapus.'
             ]);
         } else {
             return response()->json([
                 'status' => 400,
-                'message' => 'Failed to delete petugas.'
+                'message' => 'Gagal menghapus petugas.'
             ]);
         }
     }

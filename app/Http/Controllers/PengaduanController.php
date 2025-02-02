@@ -23,9 +23,7 @@ class PengaduanController extends Controller
             'id_petugas' => 'required|exists:petugas,id_petugas',
             'id_kategori' => 'required|exists:kategori,id_kategori',
             'date' => 'required|date',
-            'description' => 'required|string|max:255',
-            'treatment' => 'nullable|string|max:500',
-            'veterinarian' => 'nullable|string|max:255',
+            'deskripsi' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -36,7 +34,14 @@ class PengaduanController extends Controller
             ], 422);
         }
 
-        $pengaduan = Pengaduan::create($request->only(['id_petugas', 'id_kategori', 'date', 'description', 'treatment', 'veterinarian']));
+        $pengaduan = Pengaduan::create([
+            'id_petugas' => $request->id_petugas,
+            'id_kategori' => $request->id_kategori,
+            'deskripsi' => $request->description,
+            'status' => 'terbuka', // set default status
+            'date' => $request->date,
+        ]);
+
         return response()->json([
             'status' => 200,
             'message' => 'Pengaduan created successfully'
@@ -46,7 +51,10 @@ class PengaduanController extends Controller
 
     public function getall()
     {
-        $pengaduan = Pengaduan::with('animal')->get();
+        $pengaduan = Pengaduan::with(['petugas', 'kategori'])
+        ->where('status', 'terbuka')
+        ->get();
+        
         return response()->json([
             'status' => 200,
             'pengaduan' => $pengaduan

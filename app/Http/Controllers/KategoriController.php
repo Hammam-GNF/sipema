@@ -20,10 +20,7 @@ class KategoriController extends Controller
     {
         // Validasi data
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'species' => 'required|string|max:255',
-            'age' => 'required|integer',
-            'description' => 'nullable|string|max:500',
+            'nama_kategori' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -34,12 +31,12 @@ class KategoriController extends Controller
             ], 422);
         }
 
-        $kategoriData = $request->only(['name', 'species', 'age', 'description']);
+        $kategoriData = $request->only(['nama_kategori']);
         Kategori::create($kategoriData);
 
         return response()->json([
             'status' => 200,
-            'message' => 'Kategori created successfully'
+            'message' => 'Kategori berhasil ditambahkan.'
         ]);
     }
 
@@ -52,9 +49,9 @@ class KategoriController extends Controller
         ]);
     }
 
-    public function edit($id)
+    public function edit($id_kategori)
     {
-        $kategori = Kategori::find($id);
+        $kategori = Kategori::find($id_kategori);
         if ($kategori) {
             return response()->json([
                 'status' => 200,
@@ -63,7 +60,7 @@ class KategoriController extends Controller
         } else {
             return response()->json([
                 'status' => 404,
-                'message' => 'Kategori not found'
+                'message' => 'Kategori tidak ditemukan'
             ]);
         }
     }
@@ -71,11 +68,7 @@ class KategoriController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id_kategori' => 'required|exists:kategori,id_kategori',
-            'name' => 'required|string|max:255',
-            'species' => 'required|string|max:255',
-            'age' => 'required|integer',
-            'description' => 'nullable|string|max:500',
+            'nama_kategori' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -86,17 +79,17 @@ class KategoriController extends Controller
             ], 422);
         }
 
-        $kategori = Kategori::find($request->id);
+        $kategori = Kategori::find($request->id_kategori);
         if ($kategori) {
-            $kategori->update($request->only(['name', 'species', 'age', 'description']));
+            $kategori->update($request->only(['nama_kategori']));
             return response()->json([
                 'status' => 200,
-                'message' => 'Kategori updated successfully'
+                'message' => 'Kategori berhasil diperbarui'
             ]);
         } else {
             return response()->json([
                 'status' => 404,
-                'message' => 'Kategori not found'
+                'message' => 'Kategori tidak ditemukan'
             ]);
         }
     }
@@ -115,16 +108,16 @@ class KategoriController extends Controller
             ], 422);
         }
 
-        $kategori = Kategori::find($request->id);
+        $kategori = Kategori::find($request->id_kategori);
         if ($kategori && $kategori->delete()) {
             return response()->json([
                 'status' => 200,
-                'message' => 'Kategori deleted successfully.'
+                'message' => 'Kategori berhasil dihapus.'
             ]);
         } else {
             return response()->json([
                 'status' => 400,
-                'message' => 'Failed to delete kategori.'
+                'message' => 'Gagal menghapus kategori.'
             ]);
         }
     }
