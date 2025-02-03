@@ -24,17 +24,17 @@
 
     $(document).ready(function() {
         $.ajax({
-            url: "{{ route('kategori.count') }}",
+            url: "{{ route('user.count') }}",
             type: 'GET',
             success: function(response) {
                 if (response.status === 200) {
-                    $('#total-kategori').text(response.totalKategori);
+                    $('#total-pengguna').text(response.totalUser);
                 } else {
-                    $('#total-kategori').text('Error fetching data');
+                    $('#total-pengguna').text('Error fetching data');
                 }
             },
             error: function() {
-                $('#total-kategori').text('Error fetching data');
+                $('#total-pengguna').text('Error fetching data');
             }
         });
     });

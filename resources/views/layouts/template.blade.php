@@ -55,10 +55,10 @@
                             <p>Data Petugas</p>
                         </a>
                     </li>
-                    <li class="{{ Route::currentRouteName() == 'kategori.index' ? 'active' : '' }}">
-                        <a href="{{ route('kategori.index') }}">
-                            <i class="nc-icon nc-tile-56"></i>
-                            <p>Data Kategori</p>
+                    <li class="{{ Route::currentRouteName() == 'user.index' ? 'active' : '' }}">
+                        <a href="{{ route('user.index') }}">
+                            <i class="nc-icon nc-single-02"></i>
+                            <p>Data Pengguna</p>
                         </a>
                     </li>
                     <!-- Pengaduan with Submenu -->

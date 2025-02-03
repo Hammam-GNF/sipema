@@ -46,8 +46,8 @@
                         </div>
                         <div class="col-7 col-md-8">
                             <div class="numbers">
-                                <p class="card-category">Total Kategori</p>
-                                <p class="card-title" id="total-kategori">
+                                <p class="card-category">Total Pengguna</p>
+                                <p class="card-title" id="total-pengguna">
                                     Loading...
                                 <p>
                             </div>
