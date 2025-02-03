@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role'
     ];
 
     /**
@@ -46,8 +47,23 @@ class User extends Authenticatable
         ];
     }
 
-    public function role()
+    public function petugas()
     {
-        return $this->belongsTo(Role::class, 'id_role', 'id_role');
+        return $this->hasMany(Petugas::class, 'id_user', 'id_user');
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === 'Admin';
+    }
+
+    public function isPetugas()
+    {
+        return $this->role === 'Petugas';
+    }
+
+    public function isUser()
+    {
+        return $this->role === 'User';
     }
 }

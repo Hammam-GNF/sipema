@@ -25,8 +25,12 @@ class Petugas extends Model
         $this->attributes['password'] = Hash::make($value);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
     public function pengaduan()
     {
-        return $this->hasMany(Pengaduan::class, 'id_petugas', 'id_petugas');
+        return $this->hasMany(Pengaduan::class, 'id_petugas');
     }
 }
