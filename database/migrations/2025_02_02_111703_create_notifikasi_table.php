@@ -11,14 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('petugas', function (Blueprint $table) {
-            $table->id('id_petugas');
+        Schema::create('notifikasi', function (Blueprint $table) {
+            $table->id('id_notifikasi');
             $table->unsignedBigInteger('id_user');
-            $table->string('jabatan');
+            $table->unsignedBigInteger('id_pengaduan');
+            $table->text('pesan');
+            $table->boolean('status_baca')->default(false);
+            $table->timestamp('tanggal_kirim')->useCurrent();
             $table->timestamps();
 
             $table->foreign('id_user')->references('id_user')->on('users')->onUpdate('cascade')->onDelete('restrict');
-
+            $table->foreign('id_pengaduan')->references('id_pengaduan')->on('pengaduan')->onUpdate('cascade')->onDelete('restrict');
         });
     }
 
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('petugas');
+        Schema::dropIfExists('notifikasi');
     }
 };

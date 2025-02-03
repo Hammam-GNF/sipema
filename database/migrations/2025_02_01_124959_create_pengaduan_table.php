@@ -12,15 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pengaduan', function (Blueprint $table) {
-            $table->increments('id_pengaduan');
-            $table->unsignedInteger('id_petugas');
-            $table->unsignedInteger('id_kategori');
+            $table->id('id_pengaduan');
+            $table->unsignedBigInteger('id_user');
+            $table->unsignedBigInteger('id_petugas');
+            $table->string('judul_pengaduan');
             $table->text('deskripsi');
-            $table->enum('status', ['terbuka', 'proses', 'selesai']);
+            $table->string('bukti')->nullable();
+            $table->date('tanggal_pengaduan');
+            $table->enum('status', ['Menunggu Verifikasi', 'Diproses', 'Selesai', 'Ditolak']);
             $table->timestamps();
 
-            $table->foreign('id_petugas')->references('id_petugas')->on('petugas');
-            $table->foreign('id_kategori')->references('id_kategori')->on('kategori');
+            $table->foreign('id_user')->references('id_user')->on('users')->onUpdate('cascade')->onDelete('restrict');
+            $table->foreign('id_petugas')->references('id_petugas')->on('petugas')->onUpdate('cascade')->onDelete('restrict');
         });
     }
 
