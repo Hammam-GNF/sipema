@@ -2,25 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Kategori;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class KategoriController extends Controller
+class UserController extends Controller
 {
     public function count()
     {
-        $totalKategori = Kategori::count();
+        $totalUser = User::where('role', 'User')->count();
         return response()->json([
             'status' => 200,
-            'totalKategori' => $totalKategori
+            'totalUser' => $totalUser
         ]);
     }
     public function store(Request $request)
     {
         // Validasi data
         $validator = Validator::make($request->all(), [
-            'nama_kategori' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'role' => 'required|in:admin,user,petugas',
+            'password' => 'required|string|min:8',
         ]);
 
         if ($validator->fails()) {
@@ -31,36 +34,37 @@ class KategoriController extends Controller
             ], 422);
         }
 
-        $kategoriData = $request->only(['nama_kategori']);
-        Kategori::create($kategoriData);
+        $userData = $request->only(['name', 'email', 'role', 'password']);
+        $userData['password'] = bcrypt($userData['password']);
+
+        User::create($userData);
 
         return response()->json([
             'status' => 200,
-            'message' => 'Kategori berhasil ditambahkan.'
+            'message' => 'User berhasil ditambahkan.'
         ]);
     }
 
     public function getall()
     {
-        $kategori = Kategori::all();
+        $users = User::where('role', 'User')->get();
         return response()->json([
             'status' => 200,
-            'kategori' => $kategori
+            'user' => $users
         ]);
     }
 
-    public function edit($id_kategori)
+    public function edit($id_user)
     {
-        $kategori = Kategori::find($id_kategori);
-        if ($kategori) {
+        $user = User::find($id_user);
+        if ($user) {
             return response()->json([
-                'status' => 200,
-                'kategori' => $kategori
+                'status' => 200,'user' => $user
             ]);
         } else {
             return response()->json([
                 'status' => 404,
-                'message' => 'Kategori tidak ditemukan'
+                'message' => 'User tidak ditemukan'
             ]);
         }
     }
@@ -68,7 +72,10 @@ class KategoriController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nama_kategori' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $request->id_user . ',id_user|max:255',
+            'role' => 'required|in:admin,user,petugas',
+            'password' => 'nullable|string|min:8', 
         ]);
 
         if ($validator->fails()) {
@@ -79,17 +86,24 @@ class KategoriController extends Controller
             ], 422);
         }
 
-        $kategori = Kategori::find($request->id_kategori);
-        if ($kategori) {
-            $kategori->update($request->only(['nama_kategori']));
+        $user = User::find($request->id_user);
+
+        if ($user) {
+            $user -> update($request->only(['name', 'email', 'role']));
+
+            if ($request->has('password') && $request->password != '') {
+                $user->password = $request->password;
+                $user->save();
+            }
+
             return response()->json([
                 'status' => 200,
-                'message' => 'Kategori berhasil diperbarui'
+                'message' => 'User berhasil diperbarui.'
             ]);
         } else {
             return response()->json([
                 'status' => 404,
-                'message' => 'Kategori tidak ditemukan'
+                'message' => 'User tidak ditemukan'
             ]);
         }
     }
@@ -97,7 +111,7 @@ class KategoriController extends Controller
     public function delete(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id_kategori' => 'required|exists:kategori,id_kategori',
+            'id_user' => 'required|exists:users,id_user',
         ]);
 
         if ($validator->fails()) {
@@ -108,16 +122,16 @@ class KategoriController extends Controller
             ], 422);
         }
 
-        $kategori = Kategori::find($request->id_kategori);
-        if ($kategori && $kategori->delete()) {
+        $user = User::find($request->id_user);
+        if ($user && $user->delete()) {
             return response()->json([
                 'status' => 200,
-                'message' => 'Kategori berhasil dihapus.'
+                'message' => 'User berhasil dihapus.'
             ]);
         } else {
             return response()->json([
                 'status' => 400,
-                'message' => 'Gagal menghapus kategori.'
+                'message' => 'Gagal menghapus user.'
             ]);
         }
     }

@@ -24,7 +24,7 @@ class PetugasController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:petugas,email|max:255',
-            'role' => 'required|in:Admin,Petugas',
+            'role' => 'required|in:admin,petugas',
             'password' => 'required|string|min:6|max:20',
         ]);
 
@@ -49,7 +49,7 @@ class PetugasController extends Controller
 
     public function getall()
     {
-        $petugas = Petugas::all();
+        $petugas = Petugas::with('user')->get();
         return response()->json([
             'status' => 200,
             'petugas' => $petugas
@@ -79,7 +79,7 @@ class PetugasController extends Controller
             'id_petugas' => 'required|exists:petugas,id_petugas',
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:petugas,email,' . $request->id_petugas . ',id_petugas|max:255',
-            'role' => 'required|in:Admin,Petugas',
+            'role' => 'required|in:admin,petugas',
             'password' => 'nullable|string|min:6|max:20',
         ]);
 
