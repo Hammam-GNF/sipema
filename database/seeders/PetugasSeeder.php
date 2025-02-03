@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -15,35 +16,33 @@ class PetugasSeeder extends Seeder
      */
     public function run(): void
     {
-        $petugas = [];
-
-        $adminName = 'Admin';
-        $adminEmail = strtolower(str_replace(' ', '', $adminName)) . '@example.com';
-        $petugas[] = [
-            'name' => 'Admin',
-            'email' => $adminEmail,
-            'role' => 'Admin',
-            'email_verified_at' => now(),
-            'password' => Hash::make($adminEmail),
-            'created_at' => now(),
-            'updated_at' => now(),
-            'remember_token' => Str::random(10),
+        $jabatanList = [
+            'Kepala Dinas',
+            'Sekretaris Daerah',
+            'Bendahara Pengeluaran',
+            'Kepala Sub Bagian',
+            'Petugas Keamanan',
+            'Staf Administrasi Umum',
+            'Operator Sistem Informasi',
+            'Petugas Kesehatan',
+            'Petugas Sosial',
+            'Petugas Keuangan'
         ];
 
-        for ($i = 1; $i <= 20; $i++) {
-            $name = fake()->name();
-            $formattedName = strtolower(str_replace([' ', '.', '\''], '', $name));
-            $email = $formattedName . '@example.com';
+        $jabatanCount = count($jabatanList);
+
+        $users = User::where('role', 'petugas')->get();
+
+        $petugas = [];
+
+        foreach ($users as $index => $user) {
+            $jabatan = $jabatanList[$index % $jabatanCount];
 
             $petugas[] = [
-                'name' => $name,
-                'email' => $email,
-                'role' => 'Petugas',
-                'email_verified_at' => now(),
-                'password' => Hash::make($email),
+                'id_user' => $user->id_user,
+                'jabatan' => $jabatan,
                 'created_at' => now(),
                 'updated_at' => now(),
-                'remember_token' => Str::random(10),
             ];
         }
 
