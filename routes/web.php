@@ -1,47 +1,77 @@
 <?php
 
-use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\PetugasController;
+use App\Http\Controllers\UserController;
+use App\Http\Middleware\cekLogin;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('layouts.dashboard');
-})->name('layouts.dashboard');
+Route::get('/', [AuthController::class, 'login'])->name('login');
+Route::post('/actionLogin', [AuthController::class, 'actionLogin'])->name('actionLogin');
+
+Route::middleware([cekLogin::class])->group(function () {
+    Route::middleware('cekLogin:admin')->group(function () {
+        Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+
+        Route::prefix('admin/petugas')->group(function () {
+            Route::get('/', function () {
+                return view('petugas.index');
+            })->name('petugas.index');
+            // Route untuk CRUD operasi petugas
+            Route::post('/store', [PetugasController::class, 'store'])->name('petugas.store');
+            Route::get('/getall', [PetugasController::class, 'getall'])->name('petugas.getall');
+            Route::get('/count', [PetugasController::class, 'count'])->name('petugas.count');
+            Route::get('/{id_petugas}/edit', [PetugasController::class, 'edit'])->name('petugas.edit');
+            Route::post('/update', [PetugasController::class, 'update'])->name('petugas.update');
+            Route::delete('/delete', [PetugasController::class, 'delete'])->name('petugas.delete');
+        });
+
+        // Route::prefix('admin/pengguna')->group(function () {
+        //     Route::get('/', function () {
+        //         return view('user.index');
+        //     })->name('user.index');
+        //     // Route untuk CRUD operasi user
+        //     Route::post('/store', [UserController::class, 'store'])->name('user.store');
+        //     Route::get('/getall', [UserController::class, 'getall'])->name('user.getall');
+        //     Route::get('/count', [UserController::class, 'count'])->name('user.count');
+        //     Route::get('/{id_user}/edit', [UserController::class, 'edit'])->name('user.edit');
+        //     Route::post('/update', [UserController::class, 'update'])->name('user.update');
+        //     Route::delete('/delete', [UserController::class, 'delete'])->name('user.delete');
+        // });
+    
+    });
+
+    Route::middleware('cekLogin:user')->group(function () {
+        Route::get('/user/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
 
 
-Route::get('/petugas', function () {
-    return view('petugas.index');
-})->name('petugas.index');
+        Route::prefix('user/pengaduan')->group(function () {
+            Route::get('/', [PengaduanController::class, 'index'])->name('pengaduan.data.index');
+            // Route untuk CRUD operasi pengaduan
+            Route::post('/store', [PengaduanController::class, 'store'])->name('pengaduan.store');
+            Route::get('/getall', [PengaduanController::class, 'getall'])->name('pengaduan.getall');
+            Route::get('/count', [PengaduanController::class, 'count'])->name('pengaduan.count');
+            Route::get('/{id_pengaduan}/edit', [PengaduanController::class, 'edit'])->name('pengaduan.edit');
+            Route::put('/update/{id}', [PengaduanController::class, 'update'])->name('pengaduan.update');
+            Route::delete('/delete', [PengaduanController::class, 'delete'])->name('pengaduan.delete');
+        });
+    });
+});
 
-// Route untuk CRUD operasi petugas
-Route::post('/petugas/store', [PetugasController::class, 'store'])->name('petugas.store');
-Route::get('/petugas/getall', [PetugasController::class, 'getall'])->name('petugas.getall');
-Route::get('/petugas/count', [PetugasController::class, 'count'])->name('petugas.count');
-Route::get('/petugas/{id_petugas}/edit', [PetugasController::class, 'edit'])->name('petugas.edit');
-Route::post('/petugas/update', [PetugasController::class, 'update'])->name('petugas.update');
-Route::delete('/petugas/delete', [PetugasController::class, 'delete'])->name('petugas.delete');
 
-Route::get('/kategori', function () {
-    return view('kategori.index');
-})->name('kategori.index');
 
-// Route untuk CRUD operasi kategori
-Route::post('/kategori/store', [KategoriController::class, 'store'])->name('kategori.store');
-Route::get('/kategori/getall', [KategoriController::class, 'getall'])->name('kategori.getall');
-Route::get('/kategori/count', [KategoriController::class, 'count'])->name('kategori.count');
-Route::get('/kategori/{id_kategori}/edit', [KategoriController::class, 'edit'])->name('kategori.edit');
-Route::post('/kategori/update', [KategoriController::class, 'update'])->name('kategori.update');
-Route::delete('/kategori/delete', [KategoriController::class, 'delete'])->name('kategori.delete');
+Route::get('/user', function () {
+    return view('user.index');
+})->name('user.index');
 
-Route::get('/pengaduan', function () {
-    return view('pengaduan.data.index');
-})->name('pengaduan.data.index');
+// Route untuk CRUD operasi user
+Route::post('/user/store', [UserController::class, 'store'])->name('user.store');
+Route::get('/user/getall', [UserController::class, 'getall'])->name('user.getall');
+Route::get('/user/count', [UserController::class, 'count'])->name('user.count');
+Route::get('/user/{id_user}/edit', [UserController::class, 'edit'])->name('user.edit');
+Route::post('/user/update', [UserController::class, 'update'])->name('user.update');
+Route::delete('/user/delete', [UserController::class, 'delete'])->name('user.delete');
 
-// Route untuk CRUD operasi pengaduan
-Route::post('/pengaduan/store', [PengaduanController::class, 'store'])->name('pengaduan.store');
-Route::get('/pengaduan/getall', [PengaduanController::class, 'getall'])->name('pengaduan.getall');
-Route::get('/pengaduan/count', [PengaduanController::class, 'count'])->name('pengaduan.count');
-Route::get('/pengaduan/{id_pengaduan}/edit', [PengaduanController::class, 'edit'])->name('pengaduan.edit');
-Route::put('/pengaduan/update/{id}', [PengaduanController::class, 'update'])->name('pengaduan.update');
-Route::delete('/pengaduan/delete', [PengaduanController::class, 'delete'])->name('pengaduan.delete');
+
