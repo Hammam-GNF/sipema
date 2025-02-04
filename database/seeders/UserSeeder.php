@@ -18,14 +18,15 @@ class UserSeeder extends Seeder
         $users = [];
 
         // Admin
-        $adminName = 'Admin';
+        $adminName = 'admin';
         $adminEmail = strtolower(str_replace(' ', '', $adminName)) . '@example.com';
+        $password = 'password';
         $users[] = [
             'name' => $adminName,
             'email' => $adminEmail,
             'role' => 'admin',
             'email_verified_at' => now(),
-            'password' => Hash::make($adminEmail),
+            'password' => Hash::make($password),
             'created_at' => now(),
             'updated_at' => now(),
             'remember_token' => Str::random(10),
