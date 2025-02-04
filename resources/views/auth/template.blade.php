@@ -31,8 +31,13 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('loginAssets/css/util.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('loginAssets/css/main.css') }}">
     <!--===============================================================================================-->
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.min.css">
+    <!-- Dari unpkg -->
+    <link rel="stylesheet" href="https://unpkg.com/sweetalert2@11.7.1/dist/sweetalert2.min.css">
+
+    <!-- Dari jsDelivr dengan fallback -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.min.css"
+        onerror="this.onerror=null;this.href='https://unpkg.com/sweetalert2@11.7.1/dist/sweetalert2.min.css';">
+
 
     @yield('styles')
 </head>

@@ -43,7 +43,9 @@
                 error: function(xhr, status, error) {
                     var response = xhr.responseJSON;
 
-                    if (response.status === 422) {
+                    if (xhr.status === 422 && response.errors) {
+                        $('.alert-danger').remove();
+
                         if (response.errors.email) {
                             $('#email').after('<div class="alert alert-danger">' + response.errors.email[0] + '</div>');
                         }
@@ -51,6 +53,7 @@
                             $('#password').after('<div class="alert alert-danger">' + response.errors.password[0] + '</div>');
                         }
                     } else {
+
                         Swal.fire(
                             'Error!',
                             'Terjadi kesalahan saat login. Silakan coba lagi.',
