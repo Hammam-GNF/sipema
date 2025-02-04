@@ -20,9 +20,12 @@ class cekLogin
             return redirect()->route('login');
         }
 
-        if ($role && Auth::user()->role !== $role) {
+        $userRole = Auth::user()->role;
+
+        if ($role && $userRole !== $role) {
             return abort(403, 'Unauthorized access');
         }
-        return redirect('/');
+        
+        return $next($request);
     }
 }
