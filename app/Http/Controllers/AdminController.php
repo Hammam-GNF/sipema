@@ -10,7 +10,7 @@ class AdminController extends Controller
     public function dashboard()
     {
         if (!Auth::check() || Auth::user()->role !== 'admin') {
-            return redirect()->route('logins')->with('error', 'You are not authorized to access this page.');
+            return redirect()->route('login')->with('error', 'Anda tidak berhak mengakses halaman ini.');
         }
 
         return view('admin.dashboard');
