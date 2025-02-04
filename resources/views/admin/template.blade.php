@@ -29,114 +29,20 @@
 
 <body class="">
     <div class="wrapper ">
-        <div class="sidebar" data-color="white" data-active-color="danger">
-            <div class="logo">
-                <a href="{{ route('layouts.dashboard') }}" class="simple-text logo-mini">
-                    <div class="logo-image-small">
-                        <img src="../assets/img/logo-small.png">
-                    </div>
-                </a>
-                <a href="{{ route('layouts.dashboard') }}" class="simple-text logo-normal">
-                    ADMIN
-                </a>
-            </div>
-            <!-- Menu List -->
-            <div class="sidebar-wrapper">
-                <ul class="nav overflow-hidden">
-                    <li class="{{ Route::currentRouteName() == 'layouts.dashboard' ? 'active' : '' }}">
-                        <a href="{{ route('layouts.dashboard') }}">
-                            <i class="nc-icon nc-bank"></i>
-                            <p>Dashboard</p>
-                        </a>
-                    </li>
-                    <li class="{{ Route::currentRouteName() == 'petugas.index' ? 'active' : '' }}">
-                        <a href="{{ route('petugas.index') }}">
-                            <i class="nc-icon nc-single-02"></i>
-                            <p>Data Petugas</p>
-                        </a>
-                    </li>
-                    <li class="{{ Route::currentRouteName() == 'user.index' ? 'active' : '' }}">
-                        <a href="{{ route('user.index') }}">
-                            <i class="nc-icon nc-single-02"></i>
-                            <p>Data Pengguna</p>
-                        </a>
-                    </li>
-                    <!-- Pengaduan with Submenu -->
-                    <li class="nav-item {{ Route::currentRouteName() == 'pengaduan.data.index' || Route::currentRouteName() == 'pengaduan.detail.index' ? 'active' : '' }}">
-                        <a data-toggle="collapse" href="#pengaduanSubmenu" aria-expanded="false" class="nav-link">
-                            <i class="bi bi-bandaid"></i>
-                            <p>Pengaduan</p>
-                            <b class="caret"></b>
-                        </a>
-                        <div class="collapse {{ Route::currentRouteName() == 'pengaduan.data.index' || Route::currentRouteName() == 'layouts.dashboard' ? 'show' : '' }}" id="pengaduanSubmenu">
-                            <ul class="nav pl-3">
-                                <li class="{{ Route::currentRouteName() == 'pengaduan.data.index' ? 'active' : '' }}">
-                                    <a href="{{ route('pengaduan.data.index') }}">
-                                        <i class="nc-icon nc-tile-56"></i>
-                                        <p>Data</p>
-                                    </a>
-                                </li>
-                                <li class="{{ Route::currentRouteName() == 'layouts.dashboard' ? 'active' : '' }}">
-                                    <a href="{{ route('layouts.dashboard') }}">
-                                        <i class="bi bi-file-earmark-text"></i>
-                                        <p>Detail</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
+        <!-- Sidebar -->
+        @include('admin.partials.sidebar')
+        <!-- End Sidebar -->
+
         <div class="main-panel">
             <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent">
-                <div class="container-fluid">
-                    <div class="navbar-wrapper">
-                        <div class="navbar-toggle">
-                            <button type="button" class="navbar-toggler">
-                                <span class="navbar-toggler-bar bar1"></span>
-                                <span class="navbar-toggler-bar bar2"></span>
-                                <span class="navbar-toggler-bar bar3"></span>
-                            </button>
-                        </div>
-                        <a class="navbar-brand" href="javascript:;">Sistem Pengaduan Masyarakat</a>
-                    </div>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation"
-                        aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-bar navbar-kebab"></span>
-                        <span class="navbar-toggler-bar navbar-kebab"></span>
-                        <span class="navbar-toggler-bar navbar-kebab"></span>
-                    </button>
-                </div>
-            </nav>
+            @include('admin.partials.navbar')
             <!-- End Navbar -->
 
             <!-- Content -->
             @yield("content")
             <!-- End Content -->
 
-            <footer class="footer footer-black  footer-white ">
-                <div class="container-fluid">
-                    <div class="row">
-                        <nav class="footer-nav">
-                            <ul>
-                                <li>>Creative Tim</a></li>
-                                <li>Blog</li>
-                                <li>Licenses</li>
-                            </ul>
-                        </nav>
-                        <div class="credits ml-auto">
-                            <span class="copyright">
-                                ©
-                                <script>
-                                    document.write(new Date().getFullYear())
-                                </script>, made with <i class="fa fa-heart heart"></i> by Creative Tim
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            @include('admin.partials.footer')
         </div>
     </div>
     <!--   Core JS Files   -->
