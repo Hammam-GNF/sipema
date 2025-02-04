@@ -40,28 +40,37 @@ class AuthController extends Controller
             $request->session()->regenerate();
             $user = Auth::user();
 
-            return $this->redirectUserBasedOnRole($user->role);
-        } else {
-            return back()->withErrors(['gagal' => 'Username atau password tidak valid.']);
+            $validRoles = ['admin', 'user', 'petugas'];
+            $role = $user->role;
 
-            // return response()->json([
-            //     'status' => 200,
-            //     'message' => 'Login successful',
-            //     'redirect_url' => route($user . '.dashboard')
-            // ], 200);
+            if (in_array($role, $validRoles)) {
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Login successful',
+                    'redirect_url' => route($role . '.dashboard')
+                ], 200);
+            }
         }
 
-        // return response()->json([
-        //     'status' => 401,
-        //     'message' => 'Invalid credentials'
-        // ], 401);
+        return response()->json([
+            'status' => 401,
+            'message' => 'Invalid credentials'
+        ], 401);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         Auth::logout();
-        return redirect()->route('login');
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Logout berhasil!',
+            'redirect_url' => route('login')
+        ]);
     }
+
 
     private function redirectUserBasedOnRole($role)
     {
