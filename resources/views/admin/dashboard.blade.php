@@ -1,7 +1,7 @@
-@extends('layouts.template')
+@extends('admin.template')
 
 @section('page-scripts')
-@include('layouts.partials.scripts')
+@include('admin.partials.scripts')
 @endsection
 
 @section('content')
