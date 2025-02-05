@@ -16,6 +16,11 @@
                 _token: _token
             };
 
+            var $submitButton = $('.login100-form-btn');
+            var originalText = $submitButton.text();
+
+            $submitButton.text('Loading...').prop('disabled', true);
+
             $.ajax({
                 url: "{{ route('actionLogin') }}",
                 type: 'POST',
@@ -38,6 +43,7 @@
                             response.message || 'Login failed!',
                             'error'
                         );
+                        $submitButton.text(originalText).prop('disabled', false);
                     }
                 },
                 error: function(xhr, status, error) {
@@ -60,6 +66,7 @@
                             'error'
                         );
                     }
+                    $submitButton.text(originalText).prop('disabled', false);
                 }
             });
         });
