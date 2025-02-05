@@ -3,7 +3,6 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PengaduanController;
-use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,63 +11,83 @@ Route::post('/actionLogin', [AuthController::class, 'actionLogin'])->name('actio
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('role:admin')->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/dashboardAdmin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    // PETUGAS
+    Route::get('/petugas', function () {
+        return view('admin.petugas.index');
+    })->name('petugas.index');
+    Route::post('/petugas/store', [AdminController::class, 'storePetugas'])->name('petugas.store');
+    Route::get('/petugas/getall', [AdminController::class, 'getallPetugas'])->name('petugas.getall');
+    Route::get('/petugas/count', [AdminController::class, 'countPetugas'])->name('petugas.count');
+    Route::get('/petugas/{id_petugas}/edit', [AdminController::class, 'editPetugas'])->name('petugas.edit');
+    Route::post('/petugas/update', [AdminController::class, 'updatePetugas'])->name('petugas.update');
+    Route::delete('/petugas/delete', [AdminController::class, 'deletePetugas'])->name('petugas.delete');
+    // END PETUGAS
 
-    Route::prefix('admin/petugas')->group(function () {
-        Route::get('/', function () {
-            return view('petugas.index');
-        })->name('petugas.index');
-        // Route untuk CRUD operasi petugas
-        Route::post('/store', [PetugasController::class, 'store'])->name('petugas.store');
-        Route::get('/getall', [PetugasController::class, 'getall'])->name('petugas.getall');
-        Route::get('/count', [PetugasController::class, 'count'])->name('petugas.count');
-        Route::get('/{id_petugas}/edit', [PetugasController::class, 'edit'])->name('petugas.edit');
-        Route::post('/update', [PetugasController::class, 'update'])->name('petugas.update');
-        Route::delete('/delete', [PetugasController::class, 'delete'])->name('petugas.delete');
-    });
+    // PENGGUNA
+    Route::get('/user', function () {
+        return view('admin.user.index');
+    })->name('user.index');
+    // Route untuk CRUD operasi user
+    Route::post('user/store', [AdminController::class, 'storeUser'])->name('user.store');
+    Route::get('user/getall', [AdminController::class, 'getallUser'])->name('user.getall');
+    Route::get('user/count', [AdminController::class, 'countUser'])->name('user.count');
+    Route::get('user/{id_user}/edit', [AdminController::class, 'editUser'])->name('user.edit');
+    Route::post('user/update', [AdminController::class, 'updateUser'])->name('user.update');
+    Route::delete('user/delete', [AdminController::class, 'deleteUser'])->name('user.delete');
+    // END PENGGUNA
 
-    // Route::prefix('admin/pengguna')->group(function () {
-    //     Route::get('/', function () {
-    //         return view('user.index');
-    //     })->name('user.index');
-    //     // Route untuk CRUD operasi user
-    //     Route::post('/store', [UserController::class, 'store'])->name('user.store');
-    //     Route::get('/getall', [UserController::class, 'getall'])->name('user.getall');
-    //     Route::get('/count', [UserController::class, 'count'])->name('user.count');
-    //     Route::get('/{id_user}/edit', [UserController::class, 'edit'])->name('user.edit');
-    //     Route::post('/update', [UserController::class, 'update'])->name('user.update');
-    //     Route::delete('/delete', [UserController::class, 'delete'])->name('user.delete');
-    // });
+    // PENGADUAN
+    Route::get('/admin/pengaduan', function () {
+        return view('admin.pengaduan.data.index');
+    })->name('pengaduan.index');
+    Route::get('/admin/pengaduan/getall', [AdminController::class, 'getallPengaduan'])->name('pengaduan.getallforAdmin');
+    Route::get('/admin/pengaduan/count', [AdminController::class, 'countPengaduan'])->name('pengaduan.countforAdmin');
 
+    Route::get('/admin/tindakLanjut', function () {
+        return view('admin.pengaduan.tindakLanjut.index');
+    })->name('tindakLanjut.index');
+    Route::get('/admin/tindakLanjut/getall', [AdminController::class, 'getallTindakLanjut'])->name('tindakLanjut.getallforAdmin');
+    Route::get('/admin/tindakLanjut/count', [AdminController::class, 'countTindakLanjut'])->name('tindakLanjut.countforAdmin');
+    // END PENGADUAN
+
+    // LAPORAN
+    Route::get('/laporan', function () {
+        return view('admin.laporan.index');
+    })->name('laporan.index');
+    Route::get('/laporan/getall', [AdminController::class, 'getallLaporan'])->name('laporan.getallforAdmin');
+    Route::get('/laporan/count', [AdminController::class, 'countLaporan'])->name('laporan.countforAdmin');
+    // END LAPORAN
 });
+
 
 Route::middleware('role:user')->group(function () {
-    Route::get('/user/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
+    Route::get('/dashboardUser', [UserController::class, 'dashboard'])->name('user.dashboard');
+    // PENGADUAN
+    Route::get('/user/pengaduan', function () {
+        return view('user.pengaduan.index');
+    })->name('user.pengaduan.index');
+    Route::post('/user/pengaduan/store', [UserController::class, 'storePengaduan'])->name('pengaduan.store');
+    Route::get('/user/pengaduan/getall', [UserController::class, 'getallPengaduan'])->name('pengaduan.getallforUser');
+    Route::get('/user/pengaduan/count', [UserController::class, 'countPengaduan'])->name('pengaduan.countforUser');
+    Route::get('/user/pengaduan/{id_pengaduan}/edit', [UserController::class, 'editPengaduan'])->name('pengaduan.edit');
+    Route::put('/user/pengaduan/update', [UserController::class, 'updatePengaduan'])->name('pengaduan.update');
+    Route::delete('/user/pengaduan/delete', [UserController::class, 'deletePengaduan'])->name('pengaduan.delete');
+    // END PENGADUAN
 
-
-    Route::prefix('user/pengaduan')->group(function () {
-        Route::get('/', [PengaduanController::class, 'index'])->name('pengaduan.data.index');
-        // Route untuk CRUD operasi pengaduan
-        Route::post('/store', [PengaduanController::class, 'store'])->name('pengaduan.store');
-        Route::get('/getall', [PengaduanController::class, 'getall'])->name('pengaduan.getall');
-        Route::get('/count', [PengaduanController::class, 'count'])->name('pengaduan.count');
-        Route::get('/{id_pengaduan}/edit', [PengaduanController::class, 'edit'])->name('pengaduan.edit');
-        Route::put('/update/{id}', [PengaduanController::class, 'update'])->name('pengaduan.update');
-        Route::delete('/delete', [PengaduanController::class, 'delete'])->name('pengaduan.delete');
-    });
+    // NOTIFIKASI
+    Route::get('/user/notifikasi', function () {
+        return view('user.notifikasi.index');
+    })->name('user.notifikasi.index');
+    Route::post('/user/notifikasi/store', [UserController::class, 'storeNotifikasi'])->name('notifikasi.store');
+    Route::get('/user/notifikasi/getall', [UserController::class, 'getallNotifikasi'])->name('notifikasi.getallforUser');
+    Route::get('/user/notifikasi/count', [UserController::class, 'countNotifikasi'])->name('notifikasi.countforUser');
+    Route::get('/user/notifikasi/{id_notifikasi}/edit', [UserController::class, 'editNotifikasi'])->name('notifikasi.edit');
+    Route::put('/user/notifikasi/update', [UserController::class, 'updateNotifikasi'])->name('notifikasi.update');
+    Route::delete('/user/notifikasi/delete', [UserController::class, 'deleteNotifikasi'])->name('notifikasi.delete');
+    // END NOTIFIKASI
 });
 
 
-Route::get('/user', function () {
-    return view('user.index');
-})->name('user.index');
-
-// Route untuk CRUD operasi user
-Route::post('/user/store', [UserController::class, 'store'])->name('user.store');
-Route::get('/user/getall', [UserController::class, 'getall'])->name('user.getall');
-Route::get('/user/count', [UserController::class, 'count'])->name('user.count');
-Route::get('/user/{id_user}/edit', [UserController::class, 'edit'])->name('user.edit');
-Route::post('/user/update', [UserController::class, 'update'])->name('user.update');
-Route::delete('/user/delete', [UserController::class, 'delete'])->name('user.delete');
 
 
