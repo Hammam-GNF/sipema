@@ -41,7 +41,7 @@
 
     $(document).ready(function() {
         $.ajax({
-            url: "{{ route('pengaduan.count') }}",
+            url: "{{ route('pengaduan.countforAdmin') }}",
             type: 'GET',
             success: function(response) {
                 if (response.status === 200) {
@@ -52,6 +52,40 @@
             },
             error: function() {
                 $('#total-pengaduan').text('Error fetching data');
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $.ajax({
+            url: "{{ route('tindakLanjut.countforAdmin') }}",
+            type: 'GET',
+            success: function(response) {
+                if (response.status === 200) {
+                    $('#total-tindakLanjut').text(response.totalTindakLanjut);
+                } else {
+                    $('#total-tindakLanjut').text('Error fetching data');
+                }
+            },
+            error: function() {
+                $('#total-tindakLanjut').text('Error fetching data');
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $.ajax({
+            url: "{{ route('laporan.countforAdmin') }}",
+            type: 'GET',
+            success: function(response) {
+                if (response.status === 200) {
+                    $('#total-laporan').text(response.totalLaporan);
+                } else {
+                    $('#total-laporan').text('Error fetching data');
+                }
+            },
+            error: function() {
+                $('#total-laporan').text('Error fetching data');
             }
         });
     });

@@ -28,7 +28,9 @@
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-user"></i> {{ Auth::user()->name }}
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <div class="dropdown-menu"
+                    style="right: 0; left: auto; z-index: 1050; min-width: 200px;"
+                    aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="javascript:void(0);" id="logoutButton">Logout</a>
                 </div>
             </li>

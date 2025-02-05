@@ -1,4 +1,4 @@
-<footer class="footer footer-black  footer-white ">
+<footer class="footer footer-black footer-white d-none d-md-block">
     <div class="container-fluid">
         <div class="row">
             <nav class="footer-nav">
