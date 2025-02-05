@@ -29,7 +29,7 @@ class LaporanSeeder extends Seeder
                 'id_petugas' => $id_petugas,
                 'id_pengaduan' => $id_pengaduan,
                 'isi_laporan' => $faker->paragraph,
-                'tanggal_laporan' => $faker->dateTimeThisYear(),
+                'tanggal_laporan' => $faker->date(),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
