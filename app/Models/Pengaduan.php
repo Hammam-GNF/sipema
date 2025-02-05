@@ -13,18 +13,30 @@ class Pengaduan extends Model
     protected $primaryKey = 'id_pengaduan';
     protected $fillable = [
         'id_petugas',
-        'id_kategori',
+        'id_user',
+        'judul_pengaduan',
         'deskripsi',
+        'tanggal_pengaduan',
         'status',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
 
     public function petugas()
     {
         return $this->belongsTo(Petugas::class, 'id_petugas', 'id_petugas');
     }
 
-    public function kategori()
+    public function tindakLanjut()
     {
-        return $this->belongsTo(Kategori::class, 'id_kategori', 'id_kategori');
+        return $this->hasMany(TindakLanjut::class, 'id_pengaduan', 'id_pengaduan');
+    }
+
+    public function notifikasi()
+    {
+        return $this->hasMany(Notifikasi::class, 'id_pengaduan', 'id_pengaduan');
     }
 }
