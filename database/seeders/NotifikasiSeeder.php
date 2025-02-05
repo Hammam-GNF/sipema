@@ -29,7 +29,7 @@ class NotifikasiSeeder extends Seeder
                 'id_user' => $id_user,
                 'id_pengaduan' => $id_pengaduan,
                 'pesan' => $faker->sentence,
-                'status_baca' => $faker->boolean,
+                'status_baca' => false,
                 'tanggal_kirim' => $faker->dateTimeThisYear(),
                 'created_at' => now(),
                 'updated_at' => now(),
