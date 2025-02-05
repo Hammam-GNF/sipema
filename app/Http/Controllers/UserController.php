@@ -2,28 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notifikasi;
+use App\Models\Pengaduan;
+use App\Models\Petugas;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function count()
+    public function dashboard()
     {
-        $totalUser = User::where('role', 'User')->count();
+        if (!Auth::check() || Auth::user()->role !== 'user') {
+            return redirect()->route('login')->with('error', 'Anda tidak berhak mengakses halaman ini.');
+        }
+
+        $user = Auth::user();
+
+        return view('user.dashboard', compact('user'));
+    }
+    public function countPengaduan()
+    {
+        $userId = Auth::id();
+
+        $totalPengaduan = Pengaduan::where('id_user', $userId)->count();
         return response()->json([
             'status' => 200,
-            'totalUser' => $totalUser
+            'totalPengaduan' => $totalPengaduan
         ]);
     }
-    public function store(Request $request)
+
+    public function storePengaduan(Request $request)
     {
-        // Validasi data
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'role' => 'required|in:admin,user,petugas',
-            'password' => 'required|string|min:8',
+            'judul_pengaduan' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'bukti' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'tanggal_pengaduan' => 'required|date',
         ]);
 
         if ($validator->fails()) {
@@ -34,48 +50,65 @@ class UserController extends Controller
             ], 422);
         }
 
-        $userData = $request->only(['name', 'email', 'role', 'password']);
-        $userData['password'] = bcrypt($userData['password']);
+        $randomPetugas = Petugas::inRandomOrder()->first();
 
-        User::create($userData);
+        $validatedData = $request->all();
+        $validatedData['status'] = 'Menunggu Verifikasi';
+        $validatedData['id_user'] = Auth::id();
+        $validatedData['id_petugas'] = $randomPetugas ? $randomPetugas->id_petugas : null;
+
+        if ($request->hasFile('bukti')) {
+            $validatedData['bukti'] = $request->file('bukti')->store('bukti_pengaduan');
+        }
+
+        $pengaduan = Pengaduan::create($validatedData);
 
         return response()->json([
             'status' => 200,
-            'message' => 'User berhasil ditambahkan.'
+            'message' => 'Pengaduan berhasil ditambahkan.'
         ]);
     }
 
-    public function getall()
+    public function getallPengaduan()
     {
-        $users = User::where('role', 'User')->get();
+        $id_user = $request->id_user ?? Auth::id();
+
+        $pengaduan = Pengaduan::with([
+            'user:id_user,name,email',
+            'petugas.user:id_user,name'
+        ])->where('id_user', $id_user)->get();
+
         return response()->json([
             'status' => 200,
-            'user' => $users
+            'pengaduan' => $pengaduan
         ]);
     }
 
-    public function edit($id_user)
+    public function editPengaduan($id_pengaduan)
     {
-        $user = User::find($id_user);
-        if ($user) {
+        $pengaduan = Pengaduan::find($id_pengaduan);
+        if ($pengaduan) {
             return response()->json([
-                'status' => 200,'user' => $user
+                'status' => 200,
+                'pengaduan' => $pengaduan
             ]);
         } else {
             return response()->json([
                 'status' => 404,
-                'message' => 'User tidak ditemukan'
+                'message' => 'Pengaduan not found'
             ]);
         }
     }
 
-    public function update(Request $request)
+    public function updatePengaduan(Request $request, $id_pengaduan)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $request->id_user . ',id_user|max:255',
-            'role' => 'required|in:admin,user,petugas',
-            'password' => 'nullable|string|min:8', 
+            'id_petugas' => 'required|exists:petugas,id_petugas',
+            'id_kategori' => 'required|exists:kategori,id_kategori',
+            'date' => 'required|date',
+            'description' => 'required|string|max:255',
+            'treatment' => 'nullable|string|max:500',
+            'veterinarian' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -86,32 +119,25 @@ class UserController extends Controller
             ], 422);
         }
 
-        $user = User::find($request->id_user);
-
-        if ($user) {
-            $user -> update($request->only(['name', 'email', 'role']));
-
-            if ($request->has('password') && $request->password != '') {
-                $user->password = $request->password;
-                $user->save();
-            }
-
-            return response()->json([
-                'status' => 200,
-                'message' => 'User berhasil diperbarui.'
-            ]);
-        } else {
+        $pengaduan = Pengaduan::find($id_pengaduan);
+        if (!$pengaduan) {
             return response()->json([
                 'status' => 404,
-                'message' => 'User tidak ditemukan'
-            ]);
+                'message' => 'Pengaduan not found'
+            ], 404);
         }
+
+        $pengaduan->update($request->only(['id_petugas', 'id_kategori', 'date', 'description', 'treatment', 'veterinarian']));
+        return response()->json([
+            'status' => 200,
+            'message' => 'Pengaduan updated successfully'
+        ]);
     }
 
-    public function delete(Request $request)
+    public function deletePengaduan(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id_user' => 'required|exists:users,id_user',
+            'id_pengaduan' => 'required|exists:pengaduan,id_pengaduan',
         ]);
 
         if ($validator->fails()) {
@@ -122,17 +148,37 @@ class UserController extends Controller
             ], 422);
         }
 
-        $user = User::find($request->id_user);
-        if ($user && $user->delete()) {
+        $pengaduan = Pengaduan::find($request->id);
+        if ($pengaduan && $pengaduan->delete()) {
             return response()->json([
                 'status' => 200,
-                'message' => 'User berhasil dihapus.'
+                'message' => 'Pengaduan deleted successfully.'
             ]);
         } else {
             return response()->json([
                 'status' => 400,
-                'message' => 'Gagal menghapus user.'
+                'message' => 'Failed to delete pengaduan.'
             ]);
         }
     }
+    // END PENGADUAN
+
+    // NOTIFIKASI
+
+    public function getallNotifikasi()
+    {
+        $id_user = $request->id_user ?? Auth::id();
+
+        $notifikasi = Notifikasi::with([
+            'user:id_user,name,email',
+            'pengaduan:id_pengaduan,judul_pengaduan'
+        ])->where('id_user', $id_user)->get();
+
+        return response()->json([
+            'status' => 200,
+            'notifikasi' => $notifikasi
+        ]);
+    }
+
+    // END NOTIFIKASI
 }
