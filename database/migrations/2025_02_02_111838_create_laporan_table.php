@@ -16,11 +16,18 @@ return new class extends Migration
             $table->unsignedBigInteger('id_petugas');
             $table->unsignedBigInteger('id_pengaduan');
             $table->text('isi_laporan');
-            $table->timestamp('tanggal_laporan')->useCurrent();
+            $table->date('tanggal_laporan');
             $table->timestamps();
+
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('modified_by')->nullable();
 
             $table->foreign('id_petugas')->references('id_petugas')->on('petugas')->onUpdate('cascade')->onDelete('restrict');
             $table->foreign('id_pengaduan')->references('id_pengaduan')->on('pengaduan')->onUpdate('cascade')->onDelete('restrict');
+
+            $table->foreign('created_by')->references('id_user')->on('users')->onDelete('set null');
+            $table->foreign('modified_by')->references('id_user')->on('users')->onDelete('set null');
+
         });
     }
 
