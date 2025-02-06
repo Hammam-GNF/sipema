@@ -22,6 +22,23 @@
         });
     });
 
+    $(document).ready(function() {
+        $.ajax({
+            url: "{{ route('notifikasi.countforUser') }}",
+            type: 'GET',
+            success: function(response) {
+                if (response.status === 200) {
+                    $('#total-notifikasi').text(response.totalNotifikasi);
+                } else {
+                    $('#total-notifikasi').text('Error fetching data');
+                }
+            },
+            error: function() {
+                $('#total-notifikasi').text('Error fetching data');
+            }
+        });
+    });
+
     // Konfirmasi Logout
     $(document).ready(function() {
         $('#logoutButton').click(function(e) {

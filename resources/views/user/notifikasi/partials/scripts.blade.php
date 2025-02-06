@@ -46,23 +46,45 @@
                 },
                 {
                     "data": "status_baca",
-                    "render": function(data) {
+                    "render": function(data, type, row) {
+                        let statusText = "";
                         let badgeClass = "";
+                        let cursorStyle = "pointer";
+                        let pointerEvents = "";
+
                         switch (data) {
                             case 0:
-                                badgeClass = "bg-secondary";
+                                statusText = "Belum Terbaca";
+                                badgeClass = "badge bg-warning";
                                 break;
                             case "1":
-                                badgeClass = "bg-warning text-dark";
+                            case 1:
+                                statusText = "Terbaca";
+                                badgeClass = "badge bg-success";
+                                cursorStyle = "not-allowed";
+                                pointerEvents = "none";
                                 break;
                             default:
-                                badgeClass = "bg-light text-dark";
+                                statusText = "Status Tidak Dikenal";
+                                badgeClass += " btn-light";
                         }
-                        return `<span class="badge ${badgeClass}">${data}</span>`;
+                        const formActionUrl = "{{ url('user/notifikasi') }}/" + row.id_notifikasi;
+
+                        return `
+                        <a href="#" class="${badgeClass}" style="text-decoration: none; cursor: ${cursorStyle}; pointer-events: ${pointerEvents};" 
+                            data-id="${row.id_notifikasi}">
+                            ${statusText}
+                        </a>
+                        `;
                     },
                     "className": "text-center"
-                },
+                }
             ]
+        });
+        $('#myTable').on('click', 'a', function(event) {
+            event.preventDefault();
+            var id_notifikasi = $(this).data('id');
+            updateStatus(id_notifikasi);
         });
 
         // Handle edit button click
@@ -83,6 +105,39 @@
 
             $('#editModal').modal('show');
         });
+
+        // Update status_baca function
+        function updateStatus(id_notifikasi, element) {
+            $.ajax({
+                url: "{{ url('user/notifikasi') }}/" + id_notifikasi,
+                method: 'GET', // Menggunakan GET sesuai route yang kamu buat
+                success: function(response) {
+                    if (response.status === 200) {
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: response.message,
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        $('#myTable').DataTable().ajax.reload();
+                    } else {
+                        Swal.fire({
+                            title: 'Gagal!',
+                            text: response.message,
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        title: 'Terjadi Kesalahan!',
+                        text: 'Coba lagi nanti.',
+                        icon: 'error'
+                    });
+                }
+            });
+        }
 
         // Handle add form submission
         $('#pengaduan-form').submit(function(e) {
