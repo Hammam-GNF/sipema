@@ -2,85 +2,81 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notifikasi;
+use App\Models\Pengaduan;
 use App\Models\Petugas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class PetugasController extends Controller
 {
-    public function count()
+    public function dashboard()
     {
-        $totalPetugas = Petugas::count();
-        return response()->json([
-            'status' => 200,
-            'totalPetugas' => $totalPetugas
-        ]);
-    }
-
-    public function store(Request $request)
-    {
-        // Validasi data
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:petugas,email|max:255',
-            'role' => 'required|in:admin,petugas',
-            'password' => 'required|string|min:6|max:20',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 422,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
+        if (!Auth::check() || Auth::user()->role !== 'petugas') {
+            return redirect()->route('login')->with('error', 'Anda tidak berhak mengakses halaman ini.');
         }
 
-        $petugasData = $request->only(['name', 'email', 'role']);
-        $petugasData['password'] = Hash::make($request->password);
+        $user = Auth::user();
 
-        Petugas::create($petugasData);
+        return view('petugas.dashboard', compact('user'));
+    }
 
+    // PENGADUAN
+    public function countPengaduan()
+    {
+        $user = Auth::user();
+        $petugas = Petugas::where('id_user', $user->id_user)->first();
+
+        $totalPengaduan = Pengaduan::where('id_petugas', $petugas->id_petugas)->count();
         return response()->json([
             'status' => 200,
-            'message' => 'Petugas berhasil ditambahkan.'
+            'totalPengaduan' => $totalPengaduan
         ]);
     }
 
-    public function getall()
+    public function getallPengaduan(Request $request)
     {
-        $petugas = Petugas::with('user')->get();
+        $user = Auth::user();
+        $petugas = Petugas::where('id_user', $user->id_user)->first();
+
+        $pengaduan = Pengaduan::with([
+            'petugas.user:id_user,name',
+            'user:id_user,name,email'
+        ])->where('id_petugas', $petugas->id_petugas)->get();
+
         return response()->json([
             'status' => 200,
-            'petugas' => $petugas
+            'pengaduan' => $pengaduan
         ]);
     }
 
-    public function edit($id_petugas)
+    public function editPengaduan($id_pengaduan)
     {
-        $petugas = Petugas::find($id_petugas);
-
-        if ($petugas) {
+        $pengaduan = Pengaduan::find($id_pengaduan);
+        if ($pengaduan) {
             return response()->json([
                 'status' => 200,
-                'petugas' => $petugas
+                'pengaduan' => $pengaduan
             ]);
         } else {
             return response()->json([
                 'status' => 404,
-                'message' => 'Petugas tidak ditemukan'
+                'message' => 'Pengaduan not found'
             ]);
         }
     }
 
-    public function update(Request $request)
+    public function updatePengaduan(Request $request, $id_pengaduan)
     {
         $validator = Validator::make($request->all(), [
             'id_petugas' => 'required|exists:petugas,id_petugas',
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:petugas,email,' . $request->id_petugas . ',id_petugas|max:255',
-            'role' => 'required|in:admin,petugas',
-            'password' => 'nullable|string|min:6|max:20',
+            'id_kategori' => 'required|exists:kategori,id_kategori',
+            'date' => 'required|date',
+            'description' => 'required|string|max:255',
+            'treatment' => 'nullable|string|max:500',
+            'veterinarian' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -91,26 +87,19 @@ class PetugasController extends Controller
             ], 422);
         }
 
-        $petugas = Petugas::find($request->id_petugas);
-
-        if ($petugas) {
-            $petugas->update($request->only(['name', 'email', 'role']));
-
-            if ($request->has('password') && $request->password != '') {
-                $petugas->password = $request->password;
-                $petugas->save();
-            }
-
-            return response()->json([
-                'status' => 200,
-                'message' => 'Petugas berhasil diperbarui.'
-            ]);
-        } else {
+        $pengaduan = Pengaduan::find($id_pengaduan);
+        if (!$pengaduan) {
             return response()->json([
                 'status' => 404,
-                'message' => 'Petugas tidak ditemukan'
-            ]);
+                'message' => 'Pengaduan not found'
+            ], 404);
         }
+
+        $pengaduan->update($request->only(['id_petugas', 'id_kategori', 'date', 'description', 'treatment', 'veterinarian']));
+        return response()->json([
+            'status' => 200,
+            'message' => 'Pengaduan updated successfully'
+        ]);
     }
 
     public function delete(Request $request)
@@ -140,4 +129,20 @@ class PetugasController extends Controller
             ]);
         }
     }
+    // END PENGADUAN
+
+    // NOTIFIKASI
+    public function getallNotifikasi()
+    {
+        $notifikasi = Notifikasi::with([
+            'user:id_user,name,email',
+            'pengaduan:id_pengaduan,judul_pengaduan'
+        ])->get();
+
+        return response()->json([
+            'status' => 200,
+            'notifikasi' => $notifikasi
+        ]);
+    }
+    // END NOTIFIKASI
 }
