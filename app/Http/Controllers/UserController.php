@@ -32,6 +32,16 @@ class UserController extends Controller
             'totalPengaduan' => $totalPengaduan
         ]);
     }
+    public function countNotifikasi()
+    {
+        $userId = Auth::id();
+
+        $totalNotifikasi = Notifikasi::where('id_user', $userId)->count();
+        return response()->json([
+            'status' => 200,
+            'totalNotifikasi' => $totalNotifikasi
+        ]);
+    }
 
     public function storePengaduan(Request $request)
     {
@@ -134,6 +144,16 @@ class UserController extends Controller
         ]);
     }
 
+    public function updateStatus($id_notifikasi)
+    {
+        Notifikasi::where('id_notifikasi', $id_notifikasi)->where('status_baca', 0)->update(['status_baca' => 1]);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Status diperbarui menjadi terbaca'
+        ]);
+    }
+
     public function deletePengaduan(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -164,7 +184,6 @@ class UserController extends Controller
     // END PENGADUAN
 
     // NOTIFIKASI
-
     public function getallNotifikasi()
     {
         $id_user = $request->id_user ?? Auth::id();
