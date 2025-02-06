@@ -30,11 +30,23 @@
                 },
                 success: function(response) {
                     if (response.status === 200) {
-                        Swal.fire(
-                            'Login Berhasil!',
-                            response.message,
-                            'success'
-                        ).then(function() {
+                        let timerInterval;
+                        Swal.fire({
+                            title: 'Login Berhasil!',
+                            html: 'Proses login berhasil, mengalihkan dalam <b></b> detik.',
+                            timer: 3000, // 3 detik
+                            timerProgressBar: true,
+                            didOpen: () => {
+                                Swal.showLoading();
+                                const timer = Swal.getPopup().querySelector("b");
+                                timerInterval = setInterval(() => {
+                                    timer.textContent = `${Math.floor(Swal.getTimerLeft() / 1000)}`; // Menampilkan detik
+                                }, 100);
+                            },
+                            willClose: () => {
+                                clearInterval(timerInterval);
+                            }
+                        }).then(function() {
                             window.location.href = response.redirect_url;
                         });
                     } else {
