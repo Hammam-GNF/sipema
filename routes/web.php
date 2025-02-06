@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\PengaduanController;
+use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -84,10 +84,27 @@ Route::middleware('role:user')->group(function () {
     Route::get('/user/notifikasi/count', [UserController::class, 'countNotifikasi'])->name('notifikasi.countforUser');
     Route::get('/user/notifikasi/{id_notifikasi}/edit', [UserController::class, 'editNotifikasi'])->name('notifikasi.edit');
     Route::put('/user/notifikasi/update', [UserController::class, 'updateNotifikasi'])->name('notifikasi.update');
+    Route::get('/user/notifikasi/{id_notifikasi}', [UserController::class, 'updateStatus'])->name('notifikasi.updateStatus');
     Route::delete('/user/notifikasi/delete', [UserController::class, 'deleteNotifikasi'])->name('notifikasi.delete');
     // END NOTIFIKASI
 });
 
-
-
-
+Route::middleware('role:petugas')->group(function () {
+    Route::get('/dashboardPetugas', [PetugasController::class, 'dashboard'])->name('petugas.dashboard');
+    Route::get('/petugas/pengaduan', function () {
+        return view('petugas.pengaduan.index');
+    })->name('petugas.pengaduan.index');
+    Route::get('/petugas/pengaduan/getall', [PetugasController::class, 'getallPengaduan'])->name('pengaduan.getallforPetugas');
+    Route::get('/petugas/pengaduan/count', [PetugasController::class, 'countPengaduan'])->name('pengaduan.countforPetugas');
+    // NOTIFIKASI
+    Route::get('/petugas/notifikasi', function () {
+        return view('petugas.notifikasi.index');
+    })->name('petugas.notifikasi.index');
+    Route::post('/petugas/notifikasi/store', [PetugasController::class, 'storeNotifikasi'])->name('notifikasi.storeforPetugas');
+    Route::get('/petugas/notifikasi/getall', [PetugasController::class, 'getallNotifikasi'])->name('notifikasi.getallforPetugas');
+    Route::get('/petugas/notifikasi/count', [PetugasController::class, 'countNotifikasi'])->name('notifikasi.countforPetugas');
+    Route::get('/petugas/notifikasi/{id_notifikasi}/edit', [PetugasController::class, 'editNotifikasi'])->name('notifikasi.editforPetugas');
+    Route::put('/petugas/notifikasi/update', [PetugasController::class, 'updateNotifikasi'])->name('notifikasi.updateforPetugas');
+    Route::delete('/petugas/notifikasi/delete', [PetugasController::class, 'deleteNotifikasi'])->name('notifikasi.deleteforPetugas');
+    // END NOTIFIKASI
+});
