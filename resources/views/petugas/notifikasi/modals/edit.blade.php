@@ -2,36 +2,35 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Perbaharui Data Petugas</h5>
+                <h5 class="modal-title" id="editModalLabel">Perbaharui Data Pengaduan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="edit-form" method="post">
                     @csrf
-                    <input type="hidden" id="edit-id" name="id_petugas">
+                    <input type="hidden" id="edit-id" name="id_pengaduan">
                     <div class="row">
                         <div class="col-lg">
-                            <label>Nama</label>
-                            <input type="text" id="edit-name" name="name" class="form-control">
-                        </div>
-                        <div class="col-lg">
-                            <label>Role</label>
-                            <select id="edit-role" name="role" class="form-control">
-                                <option value="Admin">Admin</option>
-                                <option value="Petugas">Petugas</option>
-                            </select>
+                            <label>Judul Pengaduan</label>
+                            <input type="text" id="edit-judul_pengaduan" name="judul_pengaduan" class="form-control">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-lg">
-                            <label>Email</label>
-                            <input type="email" id="edit-email" name="email" class="form-control">
+                            <label>Deskripsi</label>
+                            <textarea name="deskripsi" id="edit-deskripsi" class="form-control"></textarea>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-lg">
-                            <label>Password</label>
-                            <input type="password" id="edit-password" name="password" class="form-control">
+                            <label>Bukti (Opsional)</label>
+                            <input type="file" name="bukti" id="edit-bukti" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg">
+                            <label>Tanggal Pengaduan</label>
+                            <input type="date" name="tanggal_pengaduan" id="edit-tanggal_pengaduan" class="form-control" required>
                         </div>
                     </div>
                 </form>
