@@ -16,7 +16,7 @@ class PengaduanSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        $userIds = DB::table('users')->where('role', 'petugas')->pluck('id_user')->toArray();
+        $userIds = DB::table('users')->where('role', 'user')->pluck('id_user')->toArray();
         $petugasIds = DB::table('petugas')->pluck('id_petugas')->toArray();
 
         $pengaduan = [];
