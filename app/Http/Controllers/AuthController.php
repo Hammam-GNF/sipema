@@ -2,12 +2,59 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Notifications\EmailVerification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+
+    public function register()
+    {
+        return view('auth.register');
+    }
+
+    public function actionRegister(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
+            'role' => 'required|in:admin,user,petugas',
+            'no_hp' => 'nullable|string|max:15',
+            'alamat' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 422,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()->toArray()
+            ], 422);
+        }
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+            'no_hp' => $request->no_hp,
+            'alamat' => $request->alamat,
+            'email_verified_at' => now()
+        ]);
+
+        $user->notify(new EmailVerification());
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Registration successful. Please check your email.',
+            'redirect_url' => route('register')
+        ], 201);
+    }
+
     public function login()
     {
         if (Auth::check()) {
@@ -36,7 +83,7 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, true)) {
             $request->session()->regenerate();
             $user = Auth::user();
 
