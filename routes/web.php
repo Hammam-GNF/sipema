@@ -1,13 +1,17 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PetugasController;
-use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'login'])->name('login');
 Route::post('/actionLogin', [AuthController::class, 'actionLogin'])->name('actionLogin');
+
+Route::get('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/actionRegister', [AuthController::class, 'actionRegister'])->name('actionRegister');
+
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('role:admin')->group(function () {
